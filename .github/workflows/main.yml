@@ -1,0 +1,29 @@
+name: 'CI'
+
+on:
+  push:    
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+
+      - name: Install packages
+        run: npm install
+
+      - name: Run private network
+        run: npm run private-network-quiet > /dev/null &
+
+      - name: Run tests
+        run: npm run test-all
+
+      - name: Stop private network
+        run: kill $(lsof -t -i:8545)
